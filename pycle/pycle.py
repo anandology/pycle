@@ -16,6 +16,7 @@ class Pycle:
         head, tail = self._parse_code(code)
         self.do_exec(head)
         self.do_single(tail)
+        self.env.save()
 
     def _parse_code(self, code):
         """Parses the code as ast and returns head and tail.
