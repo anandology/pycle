@@ -7,9 +7,20 @@ This approach makes it possible to work in environments with resource constraint
 
 ## Command-line interface
 
+Example 1:
+
 ```
-$ pycle -c 'x = 1'
-$ pycle -c 'print(x)'
-1
+$ python -m pycle -c 'x = 1'
+$ python -m pycle -c 'y = 2'
+$ python -m pycle -c 'x + y'
+3
+```
+
+Example 2:
+
+```
+$ python -m pycle -c 'x = list(range(1000000))'
+$ python -m pycle -c 'sum(x)'
+499999500000
 ```
 
