@@ -20,25 +20,7 @@ def test_code(tmp_path, spec):
     pycle = Pycle(db_path)
     pycle.execute(spec['code'])
 
+    pycle = Pycle(db_path)
+
     for name, value in spec['env'].items():
         assert pycle.env[name] == value
-
-# def test_strings(db_path):
-#     pycle = Pycle(db_path)
-#     pycle.execute("name = 'hello'")
-#     assert pycle.env['name'] == 'hello'
-
-# def test_functions(db_path):
-#     pycle = Pycle(db_path)
-
-#     code = (
-#         "def square(x):\n" +
-#         "    return x*x\n" +
-#         "x = square(5)\n")
-
-#     pycle.execute(code)
-#     assert pycle.env['x'] == 25
-
-#     square = pycle.env['square']
-#     assert inspect.isfunction(square)
-#     assert square(5) == 25
