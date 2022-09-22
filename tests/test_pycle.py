@@ -18,7 +18,12 @@ def test_code(tmp_path, spec):
     migrate(db_path)
 
     pycle = Pycle(db_path)
-    pycle.execute(spec['code'])
+    code = spec['code']
+    if isinstance(code, list):
+        for c in code:
+            pycle.execute(c)
+    else:
+        pycle.execute(code)
 
     pycle = Pycle(db_path)
 

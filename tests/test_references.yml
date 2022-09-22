@@ -1,0 +1,17 @@
+name: test list append
+code: |
+  numbers = [1, 2, 3, 4, 5]
+  numbers.append(6)
+env:
+  numbers: [1, 2, 3, 4, 5, 6]
+---
+name: test two references to the list
+code:
+- |
+  x = [1, 2, 3]
+  y = x
+- |
+  x.append(4)
+env:
+  x: [1, 2, 3, 4]
+  y: [1, 2, 3, 4]
