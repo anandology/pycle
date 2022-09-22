@@ -1,0 +1,32 @@
+name: test numbers
+code: |
+  x = 1
+env:
+  x: 1
+---
+name: test strings
+code: |
+  name = "hello"
+env:
+  name: "hello"
+---
+name: test functions
+code: |
+  def square(x):
+    return x*x
+
+  x = square(5)
+env:
+  x: 25
+---
+name: test lists
+code: |
+  numbers = [1, 2, 3, 4, 5]
+  x = sum(numbers)
+env:
+  x: 15
+  numbers: [1, 2, 3, 4, 5]
+
+
+
+
