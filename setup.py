@@ -10,6 +10,7 @@ setup(
     packages=['pycle'],
     license="MIT",
     platforms=["any"],
+    install_requires=["cloudpickle"],
     entry_points = {
         'console_scripts': [
             'pycle = pycle.pycle:main',
