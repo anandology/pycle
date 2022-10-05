@@ -1,22 +1,39 @@
 
 from calendar import c
-import sqlite3
-import cloudpickle
+# import sqlite3
 import argparse
 import ast
-from .env import Environment
-from . import schema
+import io
+import sys
+import traceback
+from .env import FileEnvironment
+# from . import schema
 
 class Pycle:
-    def __init__(self, db_path):
-        self.conn = sqlite3.connect(db_path)
-        self.env = Environment(self.conn)
+    def __init__(self, env_path):
+        self.env = FileEnvironment(env_path)
+        self.stdout = io.StringIO()
+        self.stderr = io.StringIO()
 
     def execute(self, code):
-        head, tail = self._parse_code(code)
-        self.do_exec(head)
-        self.do_single(tail)
-        self.env.save()
+        stdout = sys.stdout
+        stderr = sys.stderr
+        sys.stdout = self.stdout
+        sys.stderr = self.stderr
+        try:
+            head, tail = self._parse_code(code)
+            self.do_exec(head)
+            self.do_single(tail)
+            self.env.save()
+        except Exception as e:
+            traceback.print_exc()
+        finally:
+            sys.stdout = stdout
+            sys.stderr = stderr
+
+        self.stdout.seek(0)
+        self.stderr.seek(0)
+        return self.stdout.read(), self.stderr.read()
 
     def _parse_code(self, code):
         """Parses the code as ast and returns head and tail.
@@ -40,20 +57,16 @@ class Pycle:
         code_obj = compile(ast_node, "<input>", "single")
         exec(code_obj, self.env)
 
-    def __enter__(self):
-        return self
-
-    def __exit__(self, type, value, traceback):
-        self.conn.close()
-
 def parse_args():
     p = argparse.ArgumentParser()
-    p.add_argument("--db", help="path to the database file", default="pycle.db")
+    # p.add_argument("--db", help="path to the database file", default="pycle.db")
+    p.add_argument("-f", "--env-file", help="path to the env file", default="pycle-env.pkl")
     p.add_argument("-c", "--code", help="code to execute", required=True)
     return p.parse_args()
 
 def main():
     args = parse_args()
-    schema.migrate(args.db)
-    with Pycle(args.db) as pycle:
-        pycle.execute(args.code)
+    pycle = Pycle(env_path=args.env_file)
+    stdout, stderr = pycle.execute(args.code)
+    print(stdout, end="")
+    print(stderr, end="")

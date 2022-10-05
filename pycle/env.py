@@ -1,6 +1,36 @@
 import cloudpickle
+from pathlib import Path
 
-class Environment(dict):
+class FileEnvironment(dict):
+    """Environment that is saved as a single file.
+    """
+    def __init__(self, path):
+        self.path = Path(path)
+        self.update(self._load(self.path))
+
+    def _load(self, path: Path) -> dict:
+        """Load the env from a file.
+        """
+        if not self.path.exists():
+            return {}
+
+        with self.path.open("rb") as f:
+            return cloudpickle.load(f)
+
+    def save(self):
+        pickled_value = cloudpickle.dumps(dict(self))
+        with self.path.open("wb") as f:
+            cloudpickle.dump(self, f)
+
+class SqliteEnvironment(dict):
+    """Environment that saves the env in a sqlite db.
+
+    Not: The initial plan was to save every variable seperately, but had
+    to pickle the entire env as a single entry to retains the references
+    correctly.
+
+    This is not used anymore and the FileEnvironment is used now.
+    """
     def __init__(self, conn):
         self.conn = conn
 
@@ -45,3 +75,5 @@ class Environment(dict):
     #     pickled_value = cloudpickle.dumps(value)
     #     self._delete(name)
     #     self._insert(name, pickled_value)
+
+
